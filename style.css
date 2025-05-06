@@ -1,0 +1,247 @@
+/* style.css */
+
+/* Base body styles (complementing Tailwind) */
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    /* overflow-x: hidden; /* Prevent horizontal scroll if any element overflows slightly during animation */
+}
+
+/* --- Intro Animation --- */
+#intro-overlay {
+    /* Tailwind classes handle most of this, but can add specifics here */
+    /* Ensure it's on top */
+    z-index: 50; 
+}
+
+#dynamic-logo {
+    font-family: 'Pacifico', cursive; /* A more playful, distinct font for the logo */
+    /* animation: pulse 2s infinite; /* Tailwind's animate-pulse is used */
+}
+
+/* Keyframes for more complex logo animations if needed */
+@keyframes logoPopIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+#dynamic-logo.animate-pop {
+    animation: logoPopIn 0.8s ease-out forwards;
+}
+
+#intro-subtitle.animate-fade-in-up {
+    animation: fadeInUp 0.6s 0.5s ease-out forwards; /* delay after logo */
+}
+
+
+/* --- App Container Animation --- */
+#app-container.loaded {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* --- Header Logo SVG Animation --- */
+#header-logo-svg path {
+    animation: drawPath 2s ease-in-out forwards;
+    stroke-dasharray: 500; /* Approximate length of the path, adjust if needed */
+    stroke-dashoffset: 500;
+    fill-opacity: 0;
+}
+
+@keyframes drawPath {
+    to {
+        stroke-dashoffset: 0;
+        fill-opacity: 1; /* Fill after drawing */
+    }
+}
+
+
+/* --- Enhanced Snippet Item Styling --- */
+.snippet-item {
+    background-color: #ffffff; /* White background for cards */
+    border-left: 5px solid #6366f1; /* Indigo-500 accent border */
+    padding: 1.25rem; /* p-5 */
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
+    margin-bottom: 1.5rem; /* space-y-6 in HTML */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    position: relative; /* For absolute positioning of elements like category tags */
+    overflow: hidden; /* To contain pseudo-elements or animations */
+}
+
+.snippet-item:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Animation for new snippets */
+.snippet-item.new-snippet-animation {
+    animation: fadeInSlideUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.snippet-item .snippet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem; /* mb-3 */
+}
+
+.snippet-item .snippet-category-tag {
+    background-color: #e0e7ff; /* indigo-100 */
+    color: #4f46e5; /* indigo-700 */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 600; /* font-semibold */
+    padding: 0.25rem 0.6rem; /* py-1 px-2.5 */
+    border-radius: 0.25rem; /* rounded-sm */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.snippet-item .delete-btn {
+    background-color: transparent;
+    color: #ef4444; /* red-500 */
+    border: 1px solid #ef4444;
+    padding: 0.3rem 0.6rem; /* py-1 px-2 */
+    border-radius: 0.375rem; /* rounded-md */
+    transition: all 0.2s ease-in-out;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.snippet-item .delete-btn:hover {
+    background-color: #ef4444; /* red-500 */
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+.snippet-item .delete-btn i { /* If using Font Awesome icon in button */
+    margin-right: 0.25rem;
+}
+
+
+.snippet-item .snippet-text-content {
+    font-size: 1rem; /* text-base */
+    color: #374151; /* gray-700 */
+    margin-bottom: 1rem; /* mb-4 */
+    white-space: pre-wrap; 
+    word-break: break-word;
+    line-height: 1.7;
+}
+
+.snippet-item .snippet-meta {
+    font-size: 0.875rem; /* text-sm */
+    color: #6b7280; /* gray-500 */
+    border-top: 1px dashed #e5e7eb; /* gray-200 */
+    padding-top: 0.75rem; /* pt-3 */
+    margin-top: 1rem; /* mt-4 */
+}
+
+.snippet-item .snippet-meta p {
+    margin-bottom: 0.35rem; /* Slightly less mb than default p */
+    display: flex;
+    align-items: center;
+}
+.snippet-item .snippet-meta p i { /* For Font Awesome icons */
+    margin-right: 0.5rem; /* mr-2 */
+    color: #9ca3af; /* gray-400 */
+    width: 16px; /* Fixed width for alignment */
+}
+
+
+.snippet-item .snippet-meta strong {
+    color: #4b5563; /* gray-600 */
+    font-weight: 500; /* medium */
+}
+
+.snippet-item .snippet-meta a {
+    color: #4f46e5; /* indigo-600 */
+    text-decoration: none;
+    word-break: break-all;
+    transition: color 0.2s ease;
+}
+
+.snippet-item .snippet-meta a:hover {
+    color: #3730a3; /* indigo-800 */
+    text-decoration: underline;
+}
+
+.snippet-item .snippet-note-content {
+    background-color: #f3f4f6; /* gray-100 */
+    padding: 0.75rem; /* p-3 */
+    border-radius: 0.375rem; /* rounded-md */
+    margin-top: 0.5rem; /* mt-2 */
+    font-style: italic;
+    color: #4b5563; /* gray-600 */
+    font-size: 0.9rem;
+    border-left: 3px solid #a5b4fc; /* indigo-300 */
+}
+.snippet-item .snippet-note-content strong {
+    font-style: normal;
+}
+
+/* Message for when no snippets are found */
+#snippets-list .no-snippets-message {
+    color: #6b7280; /* gray-500 */
+    text-align: center;
+    padding: 2.5rem; /* p-10 */
+    border: 2px dashed #d1d5db; /* gray-300 */
+    border-radius: 0.75rem; /* rounded-xl */
+    background-color: #f9fafb; /* gray-50 */
+    font-size: 1.1rem;
+}
+
+/* General button hover/focus states (complementing Tailwind) */
+button {
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+button:active {
+    transform: scale(0.98);
+}
+
+/* Input focus glow - already good with Tailwind, but can ensure consistency */
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    /* Tailwind's focus:ring-indigo-500 focus:border-indigo-500 handles this well */
+    /* box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); */
+}
+
+/* Keyframes for subtle animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Utility for animations if needed in JS */
+.animate-fadeInUp {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Footer heart animation */
+.fa-heart {
+    animation: heartbeat 1.5s infinite ease-in-out;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
