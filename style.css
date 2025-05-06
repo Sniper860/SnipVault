@@ -1,38 +1,19 @@
 /* style.css */
-
-/* Base body styles (complementing Tailwind) */
 body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
-    /* overflow-x: hidden; /* Prevent horizontal scroll if any element overflows slightly during animation */
 }
 
 /* --- Intro Animation --- */
-#intro-overlay {
-    /* Tailwind classes handle most of this, but can add specifics here */
-    /* Ensure it's on top */
-    z-index: 50; 
-}
-
-#dynamic-logo {
-    font-family: 'Pacifico', cursive; /* A more playful, distinct font for the logo */
-    /* animation: pulse 2s infinite; /* Tailwind's animate-pulse is used */
-}
-
-/* Keyframes for more complex logo animations if needed */
+#intro-overlay { z-index: 5000; } /* Ensure intro is on very top */
+#dynamic-logo { font-family: 'Pacifico', cursive; }
 @keyframes logoPopIn {
     0% { transform: scale(0.5); opacity: 0; }
     70% { transform: scale(1.1); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
 }
-#dynamic-logo.animate-pop {
-    animation: logoPopIn 0.8s ease-out forwards;
-}
-
-#intro-subtitle.animate-fade-in-up {
-    animation: fadeInUp 0.6s 0.5s ease-out forwards; /* delay after logo */
-}
-
+#dynamic-logo.animate-pop { animation: logoPopIn 0.8s ease-out forwards; }
+#intro-subtitle.animate-fade-in-up { animation: fadeInUp 0.6s 0.5s ease-out forwards; }
 
 /* --- App Container Animation --- */
 #app-container.loaded {
@@ -43,205 +24,179 @@ body {
 
 /* --- Header Logo SVG Animation --- */
 #header-logo-svg path {
-    animation: drawPath 2s ease-in-out forwards;
-    stroke-dasharray: 500; /* Approximate length of the path, adjust if needed */
+    stroke-dasharray: 500; 
     stroke-dashoffset: 500;
     fill-opacity: 0;
 }
-
 @keyframes drawPath {
     to {
         stroke-dashoffset: 0;
-        fill-opacity: 1; /* Fill after drawing */
+        fill-opacity: 1;
     }
 }
 
+/* --- Notification Styling --- */
+.notification {
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    margin-bottom: 0.5rem; /* Tailwind space-y-2 on parent */
+    display: flex;
+    align-items: center;
+}
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+.notification.success { background-color: #10b981; /* green-500 */ }
+.notification.error { background-color: #ef4444; /* red-500 */ }
+.notification.info { background-color: #3b82f6; /* blue-500 */ }
+.notification i { margin-right: 0.75rem; }
 
-/* --- Enhanced Snippet Item Styling --- */
+
+/* --- Enhanced Snippet Item Styling (List View) --- */
 .snippet-item {
-    background-color: #ffffff; /* White background for cards */
-    border-left: 5px solid #6366f1; /* Indigo-500 accent border */
+    background-color: #ffffff;
+    border-left: 5px solid #6366f1; /* indigo-500 */
     padding: 1.25rem; /* p-5 */
     border-radius: 0.5rem; /* rounded-lg */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
-    margin-bottom: 1.5rem; /* space-y-6 in HTML */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.5rem;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    position: relative; /* For absolute positioning of elements like category tags */
-    overflow: hidden; /* To contain pseudo-elements or animations */
+    position: relative;
+    overflow: hidden;
 }
-
 .snippet-item:hover {
     transform: translateY(-5px) scale(1.01);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
-
-/* Animation for new snippets */
-.snippet-item.new-snippet-animation {
-    animation: fadeInSlideUp 0.5s ease-out forwards;
-}
-
+.snippet-item.new-snippet-animation { animation: fadeInSlideUp 0.5s ease-out forwards; }
 @keyframes fadeInSlideUp {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
-
 
 .snippet-item .snippet-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start; /* Align items to top for multi-line titles */
     margin-bottom: 0.75rem; /* mb-3 */
 }
-
+.snippet-item .snippet-title-category {
+    flex-grow: 1;
+}
 .snippet-item .snippet-category-tag {
     background-color: #e0e7ff; /* indigo-100 */
     color: #4f46e5; /* indigo-700 */
     font-size: 0.75rem; /* text-xs */
     font-weight: 600; /* font-semibold */
-    padding: 0.25rem 0.6rem; /* py-1 px-2.5 */
+    padding: 0.25rem 0.6rem;
     border-radius: 0.25rem; /* rounded-sm */
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    display: inline-block; /* To sit nicely */
+    margin-bottom: 0.25rem; /* Space if title is present */
 }
-
-.snippet-item .delete-btn {
+.snippet-item .snippet-actions {
+    display: flex;
+    gap: 0.5rem; /* Space between buttons */
+    align-items: center;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+    margin-left: 1rem; /* Space from text content */
+}
+.snippet-item .action-btn {
     background-color: transparent;
-    color: #ef4444; /* red-500 */
-    border: 1px solid #ef4444;
-    padding: 0.3rem 0.6rem; /* py-1 px-2 */
+    border: 1px solid;
+    padding: 0.3rem 0.6rem;
     border-radius: 0.375rem; /* rounded-md */
     transition: all 0.2s ease-in-out;
     font-size: 0.8rem;
     line-height: 1;
+    cursor: pointer;
 }
+.snippet-item .edit-btn { color: #f59e0b; border-color: #f59e0b; /* amber-500 */ }
+.snippet-item .edit-btn:hover { background-color: #f59e0b; color: white; }
+.snippet-item .delete-btn { color: #ef4444; border-color: #ef4444; /* red-500 */ }
+.snippet-item .delete-btn:hover { background-color: #ef4444; color: white; }
 
-.snippet-item .delete-btn:hover {
-    background-color: #ef4444; /* red-500 */
-    color: white;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-}
-.snippet-item .delete-btn i { /* If using Font Awesome icon in button */
-    margin-right: 0.25rem;
-}
-
-
-.snippet-item .snippet-text-content {
-    font-size: 1rem; /* text-base */
+.snippet-item .snippet-text-preview {
+    font-size: 1rem;
     color: #374151; /* gray-700 */
-    margin-bottom: 1rem; /* mb-4 */
-    white-space: pre-wrap; 
-    word-break: break-word;
-    line-height: 1.7;
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    max-height: 4.8em; /* Approx 3 lines (1.6em * 3) */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* For multi-line ellipsis (not perfectly supported everywhere, but good fallback) */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    white-space: normal; /* Override pre-wrap for preview */
 }
-
-.snippet-item .snippet-meta {
+.snippet-item .read-more-btn {
     font-size: 0.875rem; /* text-sm */
+    color: #4f46e5; /* indigo-600 */
+    font-weight: 500; /* medium */
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+.snippet-item .read-more-btn:hover { text-decoration: underline; }
+
+.snippet-item .snippet-meta-list-view { /* Meta for list view */
+    font-size: 0.8rem;
     color: #6b7280; /* gray-500 */
     border-top: 1px dashed #e5e7eb; /* gray-200 */
-    padding-top: 0.75rem; /* pt-3 */
-    margin-top: 1rem; /* mt-4 */
+    padding-top: 0.5rem;
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap on small screens */
+    gap: 0.75rem; /* Space between meta items */
 }
-
-.snippet-item .snippet-meta p {
-    margin-bottom: 0.35rem; /* Slightly less mb than default p */
+.snippet-item .snippet-meta-list-view p {
+    margin-bottom: 0; /* Remove default p margin */
     display: flex;
     align-items: center;
 }
-.snippet-item .snippet-meta p i { /* For Font Awesome icons */
-    margin-right: 0.5rem; /* mr-2 */
-    color: #9ca3af; /* gray-400 */
-    width: 16px; /* Fixed width for alignment */
+.snippet-item .snippet-meta-list-view p i { margin-right: 0.35rem; color: #9ca3af; }
+.snippet-item .snippet-meta-list-view a { color: #4f46e5; text-decoration: none; }
+.snippet-item .snippet-meta-list-view a:hover { text-decoration: underline; }
+
+/* --- Detail View Styling --- */
+#detail-view {
+    /* Basic styling, Tailwind handles most */
+}
+#detail-text-view {
+    min-height: 150px; /* Ensure enough space for longer snippets */
+    max-height: 60vh; /* Prevent it from taking too much screen */
+    overflow-y: auto; /* Scroll if content exceeds max-height */
 }
 
-
-.snippet-item .snippet-meta strong {
-    color: #4b5563; /* gray-600 */
-    font-weight: 500; /* medium */
-}
-
-.snippet-item .snippet-meta a {
-    color: #4f46e5; /* indigo-600 */
-    text-decoration: none;
-    word-break: break-all;
-    transition: color 0.2s ease;
-}
-
-.snippet-item .snippet-meta a:hover {
-    color: #3730a3; /* indigo-800 */
-    text-decoration: underline;
-}
-
-.snippet-item .snippet-note-content {
-    background-color: #f3f4f6; /* gray-100 */
-    padding: 0.75rem; /* p-3 */
-    border-radius: 0.375rem; /* rounded-md */
-    margin-top: 0.5rem; /* mt-2 */
-    font-style: italic;
-    color: #4b5563; /* gray-600 */
-    font-size: 0.9rem;
-    border-left: 3px solid #a5b4fc; /* indigo-300 */
-}
-.snippet-item .snippet-note-content strong {
-    font-style: normal;
-}
 
 /* Message for when no snippets are found */
 #snippets-list .no-snippets-message {
-    color: #6b7280; /* gray-500 */
-    text-align: center;
-    padding: 2.5rem; /* p-10 */
-    border: 2px dashed #d1d5db; /* gray-300 */
-    border-radius: 0.75rem; /* rounded-xl */
-    background-color: #f9fafb; /* gray-50 */
-    font-size: 1.1rem;
+    color: #6b7280; text-align: center; padding: 2.5rem;
+    border: 2px dashed #d1d5db; border-radius: 0.75rem;
+    background-color: #f9fafb; font-size: 1.1rem;
 }
 
-/* General button hover/focus states (complementing Tailwind) */
-button {
-    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-button:active {
-    transform: scale(0.98);
-}
+button { transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out; }
+button:active { transform: scale(0.98); }
 
-/* Input focus glow - already good with Tailwind, but can ensure consistency */
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none;
-    /* Tailwind's focus:ring-indigo-500 focus:border-indigo-500 handles this well */
-    /* box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); */
-}
+input:focus, textarea:focus, select:focus { outline: none; }
 
-/* Keyframes for subtle animations */
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-
-/* Utility for animations if needed in JS */
-.animate-fadeInUp {
-    animation: fadeInUp 0.5s ease-out forwards;
-}
-
-/* Footer heart animation */
-.fa-heart {
-    animation: heartbeat 1.5s infinite ease-in-out;
-}
-
+.fa-heart { animation: heartbeat 1.5s infinite ease-in-out; }
 @keyframes heartbeat {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.2); }
 }
+ 
