@@ -1,57 +1,58 @@
 /* style.css */
 body {
-    font-family: 'Inter', sans-serif;
-    line-height: 1.6;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
 }
 
 /* --- Intro Animation --- */
-#intro-overlay { z-index: 5000; } /* Ensure intro is on very top */
+#intro-overlay { z-index: 6000; /* Ensure intro is on very top */ }
 #dynamic-logo { font-family: 'Pacifico', cursive; }
 @keyframes logoPopIn {
-    0% { transform: scale(0.5); opacity: 0; }
-    70% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 #dynamic-logo.animate-pop { animation: logoPopIn 0.8s ease-out forwards; }
 #intro-subtitle.animate-fade-in-up { animation: fadeInUp 0.6s 0.5s ease-out forwards; }
 
 /* --- App Container Animation --- */
 #app-container.loaded {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
 /* --- Header Logo SVG Animation --- */
 #header-logo-svg path {
-    stroke-dasharray: 500; 
-    stroke-dashoffset: 500;
-    fill-opacity: 0;
+  stroke-dasharray: 500; 
+  stroke-dashoffset: 500;
+  fill-opacity: 0;
 }
 @keyframes drawPath {
-    to {
-        stroke-dashoffset: 0;
-        fill-opacity: 1;
-    }
+  to {
+      stroke-dashoffset: 0;
+      fill-opacity: 1;
+  }
 }
 
 /* --- Notification Styling --- */
 .notification {
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    color: white;
-    font-weight: 500;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    opacity: 0;
-    transform: translateX(100%);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    margin-bottom: 0.5rem; /* Tailwind space-y-2 on parent */
-    display: flex;
-    align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  min-width: 250px; /* Ensure notifications are not too small */
 }
 .notification.show {
-    opacity: 1;
-    transform: translateX(0);
+  opacity: 1;
+  transform: translateX(0);
 }
 .notification.success { background-color: #10b981; /* green-500 */ }
 .notification.error { background-color: #ef4444; /* red-500 */ }
@@ -59,65 +60,74 @@ body {
 .notification i { margin-right: 0.75rem; }
 
 
+/* --- Auth View Styling --- */
+#auth-view {
+  /* Tailwind handles most, this is a placeholder for potential custom styles */
+}
+#auth-view button {
+  /* General button styling for auth forms if needed beyond Tailwind */
+}
+
+
 /* --- Enhanced Snippet Item Styling (List View) --- */
 .snippet-item {
-    background-color: #ffffff;
-    border-left: 5px solid #6366f1; /* indigo-500 */
-    padding: 1.25rem; /* p-5 */
-    border-radius: 0.5rem; /* rounded-lg */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    margin-bottom: 1.5rem;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    position: relative;
-    overflow: hidden;
+  background-color: #ffffff;
+  border-left: 5px solid #6366f1; /* indigo-500 */
+  padding: 1.25rem; /* p-5 */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
 }
 .snippet-item:hover {
-    transform: translateY(-5px) scale(1.01);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 .snippet-item.new-snippet-animation { animation: fadeInSlideUp 0.5s ease-out forwards; }
 @keyframes fadeInSlideUp {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 .snippet-item .snippet-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Align items to top for multi-line titles */
-    margin-bottom: 0.75rem; /* mb-3 */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; 
+  margin-bottom: 0.75rem; /* mb-3 */
 }
 .snippet-item .snippet-title-category {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 .snippet-item .snippet-category-tag {
-    background-color: #e0e7ff; /* indigo-100 */
-    color: #4f46e5; /* indigo-700 */
-    font-size: 0.75rem; /* text-xs */
-    font-weight: 600; /* font-semibold */
-    padding: 0.25rem 0.6rem;
-    border-radius: 0.25rem; /* rounded-sm */
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: inline-block; /* To sit nicely */
-    margin-bottom: 0.25rem; /* Space if title is present */
+  background-color: #e0e7ff; /* indigo-100 */
+  color: #4f46e5; /* indigo-700 */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600; /* font-semibold */
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.25rem; /* rounded-sm */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block; 
+  margin-bottom: 0.25rem; 
 }
 .snippet-item .snippet-actions {
-    display: flex;
-    gap: 0.5rem; /* Space between buttons */
-    align-items: center;
-    flex-shrink: 0; /* Prevent buttons from shrinking */
-    margin-left: 1rem; /* Space from text content */
+  display: flex;
+  gap: 0.5rem; 
+  align-items: center;
+  flex-shrink: 0; 
+  margin-left: 1rem; 
 }
 .snippet-item .action-btn {
-    background-color: transparent;
-    border: 1px solid;
-    padding: 0.3rem 0.6rem;
-    border-radius: 0.375rem; /* rounded-md */
-    transition: all 0.2s ease-in-out;
-    font-size: 0.8rem;
-    line-height: 1;
-    cursor: pointer;
+  background-color: transparent;
+  border: 1px solid;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.375rem; /* rounded-md */
+  transition: all 0.2s ease-in-out;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
 }
 .snippet-item .edit-btn { color: #f59e0b; border-color: #f59e0b; /* amber-500 */ }
 .snippet-item .edit-btn:hover { background-color: #f59e0b; color: white; }
@@ -125,64 +135,58 @@ body {
 .snippet-item .delete-btn:hover { background-color: #ef4444; color: white; }
 
 .snippet-item .snippet-text-preview {
-    font-size: 1rem;
-    color: #374151; /* gray-700 */
-    margin-bottom: 0.75rem;
-    line-height: 1.6;
-    max-height: 4.8em; /* Approx 3 lines (1.6em * 3) */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    /* For multi-line ellipsis (not perfectly supported everywhere, but good fallback) */
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    white-space: normal; /* Override pre-wrap for preview */
+  font-size: 1rem;
+  color: #374151; /* gray-700 */
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+  max-height: 4.8em; /* Approx 3 lines (1.6em * 3) */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  white-space: normal; 
 }
 .snippet-item .read-more-btn {
-    font-size: 0.875rem; /* text-sm */
-    color: #4f46e5; /* indigo-600 */
-    font-weight: 500; /* medium */
-    cursor: pointer;
-    display: inline-block;
-    margin-top: 0.5rem;
+  font-size: 0.875rem; /* text-sm */
+  color: #4f46e5; /* indigo-600 */
+  font-weight: 500; /* medium */
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 0.5rem;
 }
 .snippet-item .read-more-btn:hover { text-decoration: underline; }
 
-.snippet-item .snippet-meta-list-view { /* Meta for list view */
-    font-size: 0.8rem;
-    color: #6b7280; /* gray-500 */
-    border-top: 1px dashed #e5e7eb; /* gray-200 */
-    padding-top: 0.5rem;
-    margin-top: 0.75rem;
-    display: flex;
-    flex-wrap: wrap; /* Allow items to wrap on small screens */
-    gap: 0.75rem; /* Space between meta items */
+.snippet-item .snippet-meta-list-view { 
+  font-size: 0.8rem;
+  color: #6b7280; /* gray-500 */
+  border-top: 1px dashed #e5e7eb; /* gray-200 */
+  padding-top: 0.5rem;
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 0.75rem; 
 }
 .snippet-item .snippet-meta-list-view p {
-    margin-bottom: 0; /* Remove default p margin */
-    display: flex;
-    align-items: center;
+  margin-bottom: 0; 
+  display: flex;
+  align-items: center;
 }
 .snippet-item .snippet-meta-list-view p i { margin-right: 0.35rem; color: #9ca3af; }
 .snippet-item .snippet-meta-list-view a { color: #4f46e5; text-decoration: none; }
 .snippet-item .snippet-meta-list-view a:hover { text-decoration: underline; }
 
 /* --- Detail View Styling --- */
-#detail-view {
-    /* Basic styling, Tailwind handles most */
-}
 #detail-text-view {
-    min-height: 150px; /* Ensure enough space for longer snippets */
-    max-height: 60vh; /* Prevent it from taking too much screen */
-    overflow-y: auto; /* Scroll if content exceeds max-height */
+  min-height: 150px; 
+  max-height: 60vh; 
+  overflow-y: auto; 
 }
 
-
-/* Message for when no snippets are found */
 #snippets-list .no-snippets-message {
-    color: #6b7280; text-align: center; padding: 2.5rem;
-    border: 2px dashed #d1d5db; border-radius: 0.75rem;
-    background-color: #f9fafb; font-size: 1.1rem;
+  color: #6b7280; text-align: center; padding: 2.5rem;
+  border: 2px dashed #d1d5db; border-radius: 0.75rem;
+  background-color: #f9fafb; font-size: 1.1rem;
 }
 
 button { transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out; }
@@ -191,12 +195,16 @@ button:active { transform: scale(0.98); }
 input:focus, textarea:focus, select:focus { outline: none; }
 
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .fa-heart { animation: heartbeat 1.5s infinite ease-in-out; }
 @keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2); }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
- 
+
+/* Ensure app container is hidden initially if auth view is shown */
+#app-container.hidden-for-auth {
+  display: none !important; /* Use important if Tailwind opacity is fighting */
+}
