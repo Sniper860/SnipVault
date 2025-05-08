@@ -3,28 +3,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Firebase Configuration ---
     // IMPORTANT: Replace with your actual Firebase project configuration
     const firebaseConfig = {
-  apiKey: "AIzaSyAY3ODjMfF62CiiWYV90ndSv7EaEzm1U2g",
-  authDomain: "snippetsaver-1136b.firebaseapp.com",
-  projectId: "snippetsaver-1136b",
-  storageBucket: "snippetsaver-1136b.firebasestorage.app",
-  messagingSenderId: "616307570898",
-  appId: "1:616307570898:web:63679fcd1472efaf1b550b",
-  measurementId: "G-4VJ6G94VGZ"
-  };
-  
+        apiKey: "AIzaSyAY3ODjMfF62CiiWYV90ndSv7EaEzm1U2g",
+        authDomain: "snippetsaver-1136b.firebaseapp.com",
+        projectId: "snippetsaver-1136b",
+        storageBucket: "snippetsaver-1136b.firebasestorage.app",
+        messagingSenderId: "616307570898",
+        appId: "1:616307570898:web:63679fcd1472efaf1b550b",
+        measurementId: "G-4VJ6G94VGZ"
+      };
+
     // Initialize Firebase
-    // Use a try-catch block for robustness, especially if SDKs might not load.
     try {
         if (typeof firebase !== 'undefined' && !firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         } else if (typeof firebase === 'undefined') {
             console.error("Firebase SDK not loaded. Ensure firebase-app-compat.js is included and loaded before this script.");
-            // Attempt to show a basic notification even if the main function isn't fully available
             const tempNotificationArea = document.getElementById('notification-area');
             if (tempNotificationArea) {
                 tempNotificationArea.innerHTML = `<div class="notification error show" style="transform: translateX(0); opacity: 1;"><i class="fas fa-exclamation-circle"></i> Application files are missing. Please contact support.</div>`;
             }
-            return; // Stop script execution
+            return; 
         }
     } catch (e) {
         console.error("Error initializing Firebase. Ensure SDKs are loaded and config is correct.", e);
@@ -32,16 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tempNotificationArea) {
              tempNotificationArea.innerHTML = `<div class="notification error show" style="transform: translateX(0); opacity: 1;"><i class="fas fa-exclamation-circle"></i> Error initializing application. Please try again later.</div>`;
         }
-        return; // Stop script execution
+        return; 
     }
     
     const auth = firebase.auth();
     const db = firebase.firestore();
-    let currentUser = null; // To store the current Firebase user object
-    let snippetsUnsubscribe = null; // For Firestore real-time listener for snippets
-    let categoriesUnsubscribe = null; // For Firestore real-time listener for categories
-  
-  
+    let currentUser = null; 
+    let snippetsUnsubscribe = null; 
+    let categoriesUnsubscribe = null; 
+
+
     // --- DOM Elements ---
     const snippetTextEl = document.getElementById('snippet-text');
     const snippetUrlEl = document.getElementById('snippet-url');
@@ -81,11 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const introSubtitle = document.getElementById('intro-subtitle');
     const appContainer = document.getElementById('app-container'); 
     const headerLogoSVG = document.getElementById('header-logo-svg');
-  
-    // Auth View Elements
+
     const authViewEl = document.getElementById('auth-view');
-    const loginFormContainerEl = document.getElementById('login-form-container'); // Container for login form
-    const signupFormContainerEl = document.getElementById('signup-form-container'); // Container for signup form
+    const loginFormContainerEl = document.getElementById('login-form-container'); 
+    const signupFormContainerEl = document.getElementById('signup-form-container'); 
     const loginFormEl = document.getElementById('login-form');
     const signupFormEl = document.getElementById('signup-form');
     const loginEmailEl = document.getElementById('login-email');
@@ -96,44 +93,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const showLoginBtn = document.getElementById('show-login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const userEmailDisplayEl = document.getElementById('user-email-display');
-  
+
     let currentEditingSnippetId = null;
     let localSnippetsCache = []; 
     let localCategoriesCache = []; 
     const defaultCategoryNames = ["General", "Code Snippets", "Recipes", "Bookmarks", "Ideas", "Learning"];
-  
-  
+
+
     // --- Navigation / View Management ---
     function showAuthView() {
-        authViewEl.classList.remove('hidden');
-        appContainer.classList.add('hidden'); 
-        appContainer.classList.add('hidden-for-auth'); 
-        mainViewEl.classList.add('hidden'); 
-        detailViewEl.classList.add('hidden'); 
+        if(authViewEl) authViewEl.classList.remove('hidden');
+        if(appContainer) {
+            appContainer.classList.add('hidden'); 
+            appContainer.classList.add('hidden-for-auth'); 
+        }
+        if(mainViewEl) mainViewEl.classList.add('hidden'); 
+        if(detailViewEl) detailViewEl.classList.add('hidden'); 
+        
         if (introOverlay && introOverlay.style.display !== 'none') { 
             introOverlay.style.display = 'none'; 
         }
-        // Ensure login form is visible by default when auth view is shown
         if (loginFormContainerEl && signupFormContainerEl) {
             loginFormContainerEl.classList.remove('hidden');
             signupFormContainerEl.classList.add('hidden');
         }
     }
-  
+
     function showAppView() {
-        authViewEl.classList.add('hidden');
-        appContainer.classList.remove('hidden');
-        appContainer.classList.remove('hidden-for-auth');
-        showMainView(); 
+        if(authViewEl) authViewEl.classList.add('hidden');
+        if(appContainer) {
+            appContainer.classList.remove('hidden');
+            appContainer.classList.remove('hidden-for-auth');
+            // Add 'loaded' class to trigger fade-in/slide-up animation of the app container
+            appContainer.classList.add('loaded'); 
+        }
+        
+        // Animate header logo if app is shown
+        setTimeout(() => { // Small delay for visual consistency
+            if (headerLogoSVG && currentUser) { 
+                const paths = headerLogoSVG.querySelectorAll('path');
+                paths.forEach(path => {
+                    const length = path.getTotalLength();
+                    path.style.strokeDasharray = length;
+                    path.style.strokeDashoffset = length;
+                    path.style.animation = `drawPath 2s 0.5s ease-out forwards`;
+                });
+            }
+        }, 100); // Delay can be adjusted
+    
+        showMainView(); // Show the main content area within the app
     }
     
     function showMainView() {
-        mainViewEl.classList.remove('hidden');
-        detailViewEl.classList.add('hidden');
+        if(mainViewEl) mainViewEl.classList.remove('hidden');
+        if(detailViewEl) detailViewEl.classList.add('hidden');
         currentEditingSnippetId = null; 
         renderSnippets(); 
     }
-  
+
     function showDetailView(snippetId, mode = 'view') {
         const snippet = localSnippetsCache.find(s => s.id === snippetId);
         if (!snippet) {
@@ -142,49 +159,52 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         currentEditingSnippetId = snippet.id;
-        mainViewEl.classList.add('hidden');
-        detailViewEl.classList.remove('hidden');
-  
+        if(mainViewEl) mainViewEl.classList.add('hidden');
+        if(detailViewEl) detailViewEl.classList.remove('hidden');
+
         if (mode === 'view') {
-            detailContentViewEl.classList.remove('hidden');
-            detailContentEditEl.classList.add('hidden');
-            detailTitleEl.textContent = "Snippet Details";
-            detailCategoryViewEl.textContent = snippet.category;
-            detailTextViewEl.textContent = snippet.text;
+            if(detailContentViewEl) detailContentViewEl.classList.remove('hidden');
+            if(detailContentEditEl) detailContentEditEl.classList.add('hidden');
+            if(detailTitleEl) detailTitleEl.textContent = "Snippet Details";
+            if(detailCategoryViewEl) detailCategoryViewEl.textContent = snippet.category;
+            if(detailTextViewEl) detailTextViewEl.textContent = snippet.text;
+            
             if (snippet.url) {
-                detailUrlViewEl.href = snippet.url;
-                detailUrlViewEl.textContent = snippet.url;
-                detailUrlViewContainerEl.classList.remove('hidden');
+                if(detailUrlViewEl) {
+                    detailUrlViewEl.href = snippet.url;
+                    detailUrlViewEl.textContent = snippet.url;
+                }
+                if(detailUrlViewContainerEl) detailUrlViewContainerEl.classList.remove('hidden');
             } else {
-                detailUrlViewContainerEl.classList.add('hidden');
+                if(detailUrlViewContainerEl) detailUrlViewContainerEl.classList.add('hidden');
             }
             if (snippet.note) {
-                detailNoteViewEl.textContent = snippet.note;
-                detailNoteViewContainerEl.classList.remove('hidden');
+                if(detailNoteViewEl) detailNoteViewEl.textContent = snippet.note;
+                if(detailNoteViewContainerEl) detailNoteViewContainerEl.classList.remove('hidden');
             } else {
-                detailNoteViewContainerEl.classList.add('hidden');
+                if(detailNoteViewContainerEl) detailNoteViewContainerEl.classList.add('hidden');
             }
             const createdAtDate = snippet.createdAt && typeof snippet.createdAt.toDate === 'function' 
                                 ? snippet.createdAt.toDate() 
                                 : new Date(snippet.createdAt); 
-            detailDateViewEl.textContent = `${createdAtDate.toLocaleDateString()} ${createdAtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            if(detailDateViewEl) detailDateViewEl.textContent = `${createdAtDate.toLocaleDateString()} ${createdAtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
         } else if (mode === 'edit') {
-            detailContentViewEl.classList.add('hidden');
-            detailContentEditEl.classList.remove('hidden');
-            detailTitleEl.textContent = "Edit Snippet";
-            editSnippetIdEl.value = snippet.id;
-            editSnippetTextEl.value = snippet.text;
-            editSnippetUrlEl.value = snippet.url;
+            if(detailContentViewEl) detailContentViewEl.classList.add('hidden');
+            if(detailContentEditEl) detailContentEditEl.classList.remove('hidden');
+            if(detailTitleEl) detailTitleEl.textContent = "Edit Snippet";
+            if(editSnippetIdEl) editSnippetIdEl.value = snippet.id;
+            if(editSnippetTextEl) editSnippetTextEl.value = snippet.text;
+            if(editSnippetUrlEl) editSnippetUrlEl.value = snippet.url;
             populateCategoryDropdown(editSnippetCategoryEl, localCategoriesCache); 
-            editSnippetCategoryEl.value = snippet.category; 
-            editSnippetNoteEl.value = snippet.note;
+            if(editSnippetCategoryEl) editSnippetCategoryEl.value = snippet.category; 
+            if(editSnippetNoteEl) editSnippetNoteEl.value = snippet.note;
         }
         window.scrollTo(0, 0);
     }
     
     // --- Notifications ---
     function showNotification(message, type = 'info', duration = 3500) { 
-        if (!notificationAreaEl) return; // Guard if notification area is not found
+        if (!notificationAreaEl) return; 
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
@@ -199,67 +219,50 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500); 
         }, duration);
     }
-  
+
     // --- Intro Animation ---
     function playIntroAnimation(onCompleteCallback) {
-        if (!introOverlay || introOverlay.style.display === 'none') { 
+        if (!introOverlay) { 
             if(onCompleteCallback) onCompleteCallback();
             return; 
         }
-        // Ensure intro is visible before starting animation
+        
+        if (introOverlay.style.display === 'none') {
+            introOverlay.style.display = 'flex';
+        }
         introOverlay.style.opacity = '1'; 
-        introOverlay.style.display = 'flex';
-  
-  
+        introOverlay.style.pointerEvents = 'auto';
+
         if(dynamicLogo) dynamicLogo.classList.add('animate-pop');
         if(introSubtitle) setTimeout(() => introSubtitle.classList.add('animate-fade-in-up'), 300);
         
-        setTimeout(() => {
+        setTimeout(() => { 
             if(introOverlay) {
                 introOverlay.style.opacity = '0';
                 introOverlay.style.pointerEvents = 'none'; 
             }
-  
-            if (currentUser && appContainer) { 
-                appContainer.classList.add('loaded'); 
-                setTimeout(() => {
-                    if (headerLogoSVG) {
-                        const paths = headerLogoSVG.querySelectorAll('path');
-                        paths.forEach(path => {
-                            const length = path.getTotalLength();
-                            path.style.strokeDasharray = length;
-                            path.style.strokeDashoffset = length;
-                            path.style.animation = `drawPath 2s 0.5s ease-out forwards`;
-                        });
-                    }
-                }, 500); 
-            }
-            if(onCompleteCallback) onCompleteCallback();
+            if(onCompleteCallback) onCompleteCallback(); 
         }, 2000); 
-  
-        setTimeout(() => {
+
+        setTimeout(() => { 
             if (introOverlay && introOverlay.parentNode) {
                 introOverlay.parentNode.removeChild(introOverlay);
             }
         }, 3000); 
     }
-  
+
     // --- Firebase Authentication ---
     auth.onAuthStateChanged(user => {
         if (user) {
             currentUser = user;
             if(userEmailDisplayEl) userEmailDisplayEl.textContent = `${user.email}`; 
             
-            // If introOverlay is present and not already faded, play intro then show app
-            if (introOverlay && introOverlay.style.opacity !== '0' && introOverlay.style.display !== 'none') {
-                playIntroAnimation(() => {
-                    showAppView(); 
-                });
-            } else { // Intro already handled or not present, just show app
-                showAppView();
-            }
             loadUserCategories(); 
             loadUserSnippets();   
+            
+            playIntroAnimation(() => { 
+                showAppView(); 
+            });
         } else {
             currentUser = null;
             if(userEmailDisplayEl) userEmailDisplayEl.textContent = '';
@@ -272,12 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
             showAuthView();
             if (snippetsUnsubscribe) snippetsUnsubscribe(); 
             if (categoriesUnsubscribe) categoriesUnsubscribe();
-            if (introOverlay && introOverlay.parentNode) { // Ensure intro is hidden if logging out
+            if (introOverlay && introOverlay.parentNode) { 
                  introOverlay.style.display = 'none';
             }
         }
     });
-  
+
     if(loginFormEl) loginFormEl.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = loginEmailEl.value;
@@ -285,13 +288,14 @@ document.addEventListener('DOMContentLoaded', () => {
         auth.signInWithEmailAndPassword(email, password)
             .then(userCredential => {
                 showNotification('Logged in successfully!', 'success');
+                // onAuthStateChanged will handle UI update and intro
             })
             .catch(error => {
                 console.error("Login error:", error);
                 showNotification(`Login failed: ${error.message}`, 'error', 5000);
             });
     });
-  
+
     if(signupFormEl) signupFormEl.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = signupEmailEl.value;
@@ -307,17 +311,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const batch = db.batch();
                 
                 defaultCategoryNames.forEach(catName => {
-                    const catRef = userCategoriesCollection.doc(); // Auto-ID for new category
+                    const catRef = userCategoriesCollection.doc(); 
                     batch.set(catRef, { 
                         name: catName, 
-                        system: true, // Mark as a system/default category
+                        system: true, 
                         createdAt: firebase.firestore.FieldValue.serverTimestamp() 
                     });
                 });
-                return batch.commit(); // Commit the batch operation
+                return batch.commit(); 
             })
             .then(() => {
-                // Switch to login form after successful signup and category creation
                 if(signupFormContainerEl) signupFormContainerEl.classList.add('hidden');
                 if(loginFormContainerEl) loginFormContainerEl.classList.remove('hidden');
                 if(loginEmailEl) loginEmailEl.value = email; 
@@ -329,16 +332,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(`Signup failed: ${error.message}`, 'error', 5000);
             });
     });
-  
+
     if(logoutBtn) logoutBtn.addEventListener('click', () => {
         auth.signOut().then(() => {
             showNotification('Logged out successfully.', 'info');
+            // onAuthStateChanged will handle UI update
         }).catch(error => {
             console.error("Logout error:", error);
             showNotification(`Logout failed: ${error.message}`, 'error');
         });
     });
-  
+
     if(showSignupBtn) showSignupBtn.addEventListener('click', () => {
         if(loginFormContainerEl) loginFormContainerEl.classList.add('hidden');
         if(signupFormContainerEl) signupFormContainerEl.classList.remove('hidden');
@@ -347,10 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if(signupFormContainerEl) signupFormContainerEl.classList.add('hidden');
         if(loginFormContainerEl) loginFormContainerEl.classList.remove('hidden');
     });
-  
+
     // --- Category Management (Firestore) ---
     function populateCategoryDropdown(selectElement, categoriesData) {
-        if (!selectElement) return; // Guard if element doesn't exist
+        if (!selectElement) return; 
         const currentVal = selectElement.value;
         selectElement.innerHTML = ''; 
         if (selectElement.id === 'filter-category') {
@@ -361,29 +365,29 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const userCategoryNames = categoriesData.map(c => c.name);
         const uniqueCategories = [...new Set([...defaultCategoryNames, ...userCategoryNames])].sort();
-  
+
         uniqueCategories.forEach(categoryName => {
             const option = document.createElement('option');
             option.value = categoryName;
             option.textContent = categoryName;
             selectElement.appendChild(option);
         });
-  
+
         if (uniqueCategories.includes(currentVal)) {
             selectElement.value = currentVal;
         } else if (selectElement.id !== 'filter-category' && uniqueCategories.includes("General")) {
              selectElement.value = "General"; 
         } else if (selectElement.id !== 'filter-category' && uniqueCategories.length > 0) {
-             selectElement.value = uniqueCategories[0]; // Fallback to first if "General" not present
+             selectElement.value = uniqueCategories[0]; 
         } else if (selectElement.id === 'filter-category') {
             selectElement.value = ""; 
         }
     }
-  
+
     async function loadUserCategories() {
         if (!currentUser) return;
         if (categoriesUnsubscribe) categoriesUnsubscribe(); 
-  
+
         categoriesUnsubscribe = db.collection('users').doc(currentUser.uid).collection('categories')
             .orderBy('name') 
             .onSnapshot(snapshot => {
@@ -403,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification("Failed to load categories.", "error");
             });
     }
-  
+
     async function handleAddCategory() {
         if (!currentUser) {
             showNotification('You must be logged in to add categories.', 'error');
@@ -420,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newCategoryNameEl.value = '';
             return;
         }
-  
+
         try {
             await db.collection('users').doc(currentUser.uid).collection('categories').add({ 
                 name: newCategoryName,
@@ -433,12 +437,12 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification('Failed to add category.', 'error');
         }
     }
-  
+
     // --- Snippet Management (Firestore) ---
     async function loadUserSnippets() {
         if (!currentUser) return;
         if (snippetsUnsubscribe) snippetsUnsubscribe(); 
-  
+
         snippetsUnsubscribe = db.collection('users').doc(currentUser.uid).collection('snippets')
             .orderBy('createdAt', 'desc') 
             .onSnapshot(snapshot => {
@@ -451,11 +455,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function renderSnippets(isNewSnippetAdded = false) {
-        if (!snippetsListEl) return; // Guard if element doesn't exist
+        if (!snippetsListEl) return; 
         let snippetsToRender = [...localSnippetsCache]; 
         const searchTerm = searchInputEl ? searchInputEl.value.toLowerCase() : "";
         const selectedCategoryFilter = filterCategoryEl ? filterCategoryEl.value : "";
-  
+
         if (searchTerm) {
             snippetsToRender = snippetsToRender.filter(s => 
                 s.text.toLowerCase().includes(searchTerm) ||
@@ -467,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedCategoryFilter) {
             snippetsToRender = snippetsToRender.filter(s => s.category === selectedCategoryFilter);
         }
-  
+
         snippetsListEl.innerHTML = '';
         if (snippetsToRender.length === 0) {
             const message = (searchTerm || selectedCategoryFilter) 
@@ -476,11 +480,10 @@ document.addEventListener('DOMContentLoaded', () => {
             snippetsListEl.innerHTML = `<p class="no-snippets-message"><i class="fas fa-folder-open fa-2x mb-3 text-gray-400"></i><br>${message}</p>`;
             return;
         }
-  
+
         snippetsToRender.forEach((snippet) => {
             const snippetItem = document.createElement('div');
             snippetItem.className = 'snippet-item';
-            // Check if it's the newest by comparing with the first item in the original, unfiltered, sorted cache
             if (isNewSnippetAdded && localSnippetsCache.length > 0 && snippet.id === localSnippetsCache[0].id) { 
                 snippetItem.classList.add('new-snippet-animation');
             }
@@ -538,7 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
             snippetsListEl.firstChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
-  
+
     async function handleSaveSnippet() {
         if (!currentUser) {
             showNotification('You must be logged in to save snippets.', 'error');
@@ -548,13 +551,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlInput = snippetUrlEl.value.trim();
         const category = snippetCategoryEl.value || "General"; 
         const note = snippetNoteEl.value.trim();
-  
+
         if (text === '') {
             showNotification('Snippet content cannot be empty.', 'error');
             return;
         }
         const url = (urlInput && !(urlInput.startsWith('http://') || urlInput.startsWith('https://'))) ? `http://${urlInput}` : urlInput;
-  
+
         const newSnippet = {
             text, url, category, note,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(), 
@@ -568,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(snippetCategoryEl) snippetCategoryEl.value = "General"; 
             if(snippetTextEl) snippetTextEl.focus();
             showNotification('Snippet saved successfully!', 'success');
-            renderSnippets(true); // Explicitly call to trigger animation for new snippet
+            renderSnippets(true); 
         } catch (error) {
             console.error("Error saving snippet: ", error);
             showNotification('Failed to save snippet.', 'error');
@@ -585,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlInput = editSnippetUrlEl.value.trim();
         const category = editSnippetCategoryEl.value || "General";
         const note = editSnippetNoteEl.value.trim();
-  
+
         if (text === '') {
             showNotification('Snippet content cannot be empty.', 'error');
             return;
@@ -605,7 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification('Failed to update snippet.', 'error');
         }
     }
-  
+
     async function handleDeleteSnippet(snippetId) {
         if (!currentUser) {
             showNotification('You must be logged in to delete snippets.', 'error');
@@ -615,10 +618,9 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 await db.collection('users').doc(currentUser.uid).collection('snippets').doc(snippetId).delete();
                 showNotification('Snippet deleted.', 'info');
-                if (currentEditingSnippetId === snippetId && !detailViewEl.classList.contains('hidden')) { 
+                if (currentEditingSnippetId === snippetId && detailViewEl && !detailViewEl.classList.contains('hidden')) { 
                     showMainView(); 
                 }
-                // Real-time listener will update the list view automatically.
             } catch (error) {
                 console.error("Error deleting snippet: ", error);
                 showNotification('Failed to delete snippet.', 'error');
@@ -629,13 +631,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function setFooterYear() {
         if(currentYearEl) currentYearEl.textContent = new Date().getFullYear();
     }
-  
-    // --- Event Listeners (add guards for element existence) ---
+
+    // --- Event Listeners ---
     if(addCategoryBtn) addCategoryBtn.addEventListener('click', handleAddCategory);
     if(saveSnippetBtn) saveSnippetBtn.addEventListener('click', handleSaveSnippet);
     if(searchInputEl) searchInputEl.addEventListener('input', () => renderSnippets()); 
     if(filterCategoryEl) filterCategoryEl.addEventListener('change', () => renderSnippets()); 
-  
+
     if(backToListBtn) backToListBtn.addEventListener('click', showMainView);
     if(editSnippetFromViewBtn) editSnippetFromViewBtn.addEventListener('click', () => {
         if (currentEditingSnippetId) showDetailView(currentEditingSnippetId, 'edit');
@@ -644,20 +646,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if(cancelEditSnippetBtn) cancelEditSnippetBtn.addEventListener('click', () => {
         if (currentEditingSnippetId) showDetailView(currentEditingSnippetId, 'view');
     });
-  
+
     // --- Initial Load ---
     setFooterYear();
     // onAuthStateChanged handles initial view and intro animation logic.
-  
-    // Fallback for Firebase SDK load check (already present, kept for safety)
-    let firebaseCheckInterval = setInterval(() => {
-        if (typeof firebase !== 'undefined' && firebase.apps.length) {
-            clearInterval(firebaseCheckInterval);
-        } else if (typeof firebase === 'undefined') {
-            // console.log("Waiting for Firebase SDK..."); // Optional: for debugging
-        }
-    }, 100);
-    setTimeout(() => clearInterval(firebaseCheckInterval), 5000); 
-  
-  });
-  
+});
